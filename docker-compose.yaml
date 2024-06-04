@@ -14,13 +14,44 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=leo123
       - POSTGRES_DB=cats
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cats-backend
+    restart: always
+    tty: true
+    networks:
+      - cats-network
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cats-db:5432/cats
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: leo123
+    depends_on:
+      - cats-db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cats-frontend
+    restart: always
+    tty: true
+    networks:
+      - cats-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 networks:
   cats-network:
     driver: bridge
-
 
 volumes:
   db:

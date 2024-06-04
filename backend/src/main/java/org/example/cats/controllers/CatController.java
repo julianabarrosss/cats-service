@@ -14,9 +14,10 @@ import java.util.List;
 @RequestMapping("/cat")
 @Slf4j
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class CatController {
 
-    private CatService catService;
+    private final CatService catService;
 
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody CatDTO cat) {
