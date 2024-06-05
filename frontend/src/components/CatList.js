@@ -7,7 +7,7 @@ const CatList = () => {
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/cat');
+        const response = await axios.get('http://13.59.64.213:8080/cat');
         setCats(response.data);
       } catch (error) {
         console.error('Error fetching cats:', error);
