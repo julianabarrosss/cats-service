@@ -1,28 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CatList = () => {
+const CatList = ({ setFetchCats }) => {
   const [cats, setCats] = useState([]);
 
-  useEffect(() => {
-    const fetchCats = async () => {
-      try {
-        const response = await axios.get('http://18.222.248.95:8080/cat');
-        setCats(response.data);
-      } catch (error) {
-        console.error('Error fetching cats:', error);
-      }
-    };
+  const fetchCats = async () => {
+    try {
+      const response = await axios.get('http://18.222.248.95:8080/cat');
+      console.log(response.data);
+      setCats(response.data);
+    } catch (error) {
+      console.error('Error fetching cats:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchCats();
-  }, []);
+    setFetchCats(() => fetchCats);
+  }, [setFetchCats]);
 
   return (
     <div>
       <h2>Lista de Gatos</h2>
       <ul>
         {cats.map((cat) => (
-          <li key={cat.id}>{cat.name} - {cat.breed} - {cat.birth}</li>
+          <li key={cat.id}>
+            {cat.nome} - {cat.breed} - {cat.birth}
+            <button onClick={() => {
+              document.getElementById('update-id').value = cat.id;
+              document.getElementById('update-nome').value = cat.nome;
+              document.getElementById('update-breed').value = cat.breed;
+              document.getElementById('update-birth').value = cat.birth;
+            }}>Atualizar</button>
+          </li>
         ))}
       </ul>
     </div>
