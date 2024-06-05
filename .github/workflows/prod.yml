@@ -102,6 +102,12 @@ jobs:
                   --network cats-network \
                   mysql:5.7
 
+        - name: Initialize Zabbix database
+          run: |
+               if ! docker exec -it zabbix-db mysql -u root -proot_pwd -e "USE zabbix; SHOW TABLES;" | grep -q "users"; then
+               docker exec -it zabbix-db mysql -u root -proot_pwd zabbix < /usr/share/zabbix-sql-scripts/mysql/server.sql
+               fi
+
 
         - name: Start Zabbix server
           run: |
