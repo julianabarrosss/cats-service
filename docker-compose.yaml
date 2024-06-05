@@ -29,9 +29,11 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://cats-db:5432/cats
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: leo123
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cats-db:5432/cats
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=leo123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update  
+      - SPRING_JPA_SHOW_SQL=true               
     depends_on:
       - cats-db
 
