@@ -102,6 +102,13 @@ jobs:
                   --network cats-network \
                   mysql:5.7
 
+        - name: Ensure port 10051 is free
+          run: |
+                if lsof -Pi :10051 -sTCP:LISTEN -t >/dev/null ; then
+                  docker stop $(docker ps -q --filter "publish=10051") || true
+                  docker rm $(docker ps -a -q --filter "publish=10051") || true
+                fi
+
         - name: Start Zabbix server
           run: |
                 docker run -d --name zabbix-server \
