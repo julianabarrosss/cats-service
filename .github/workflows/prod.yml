@@ -95,4 +95,5 @@ jobs:
 
         - name: Start Zabbix containers
           run: |
-               docker-compose -f :~/cats-service/docker-compose.yml up -d zabbix-db zabbix-server zabbix-web zabbix-agent
+               cd ~/cats-service
+               docker-compose up -d zabbix-db zabbix-server zabbix-web zabbix-agent
