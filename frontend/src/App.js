@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Gerenciamento de Gatos</h1>
+      <h1>Gerenciamento de cachorros</h1>
       <AddCat fetchCats={fetchCats} />
       <UpdateCat fetchCats={fetchCats} />
       <CatList setFetchCats={setFetchCats} />
