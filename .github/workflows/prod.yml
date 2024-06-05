@@ -23,7 +23,8 @@ jobs:
                 node-version: '14'
             
             - name: Build project
-              run: mvn clean install -DskipTests
+              run: cd backend 
+                   mvn clean install -DskipTests
             
             - name: Dockerhub Login
               run:  docker login -u leonadolnym -p 'leo10203045@n'
