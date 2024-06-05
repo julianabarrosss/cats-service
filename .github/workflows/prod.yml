@@ -68,7 +68,20 @@ jobs:
                docker stop cats-db cats-backend cats-frontend || true
                docker rm cats-db cats-backend cats-frontend || true
 
-        - name: Start services using docker-compose  
+        - name: Start PostgreSQL container
           run: |
-              cd ~/cats-service/
-              docker-compose up -d 
+              docker run -d --name cats-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=leo123 -e POSTGRES_DB=cats -p 5432:5432 postgres:alpine
+
+        - name: Wait for PostgreSQL to be ready
+          run: |
+            until docker exec cats-db pg_isready -U postgres; do
+              sleep 1
+            done
+
+        - name: Start backend container
+          run: |
+               docker run -d -p 8080:8080 --name cat-service-backend leonadolnym/cat-service-backend:latest
+
+        - name: Start frontend container
+          run: |
+            docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
