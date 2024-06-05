@@ -1,0 +1,70 @@
+name: Deploy Catservice
+
+on:
+    push:
+        branches: [main, staging]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'corretto'
+                java-version: '21'
+            
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                node-version: '14'
+            
+            - name: Build project
+              run: mvn clean install -DskipTests
+            
+            - name: Dockerhub Login
+              run:  docker login -u leonadolnym -p 'leo10203045@n'
+
+            - name: Build docker image front
+              run: cd frontend
+                   docker build -t leonadolnym/cat-service-frontend .
+
+            - name: Build docker image back
+              run: cd backend
+                   docker build -t leonadolnym/cat-service-backend .
+
+            - name: Push image front
+              run: cd frontend
+                   docker push leonadolnym/cat-service-frontend
+            
+            - name: Push image back
+              run: cd backend
+                   docker push leonadolnym/cat-service-backend
+    
+    deploy:
+      needs: build
+      runs-on: self-hosted
+      steps:
+        - name: Dockerhub Login
+          run:  docker login -u leonadolnym -p 'leo10203045@n'
+
+        - name: Pull backend image
+          run:  docker pull leonadolnym/cat-service-backend:latest  
+        
+        - name: Pull frontend image
+          run: docker pull leonadolnym/cat-service-frontend:latest
+
+        - name: Run backend container
+          run: docker stop cat-service-backend
+               docker rm -f cat-service-backend
+               docker run -d -p 8080:8080 --name cat-service-backend leonadolnym/cat-service-backend:latest
+        
+        - name: Run frontend container
+          run: docker stop cat-service-frontend
+               docker rm -f cat-service-frontend
+               docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
+               
+    

@@ -2,7 +2,7 @@ spring:
   application:
     name: Cats Service
   datasource:
-    url: jdbc:postgresql://localhost:5432/cats
+    url: jdbc:postgresql://13.59.64.213:5432/cats
     username: postgres
     password: leo123
     driver-class-name: org.postgresql.Driver
