@@ -104,8 +104,8 @@ jobs:
 
         - name: Initialize Zabbix database
           run: |
-               if ! docker exec -it zabbix-db mysql -u root -proot_pwd -e "USE zabbix; SHOW TABLES;" | grep -q "users"; then
-               docker exec -it zabbix-db mysql -u root -proot_pwd zabbix < /usr/share/zabbix-sql-scripts/mysql/server.sql
+               if ! docker exec zabbix-db mysql -u root -proot_pwd -e "USE zabbix; SHOW TABLES;" | grep -q "users"; then
+               docker exec zabbix-server /bin/bash -c "mysql -h zabbix-db -u root -proot_pwd zabbix < /usr/share/zabbix-sql-scripts/mysql/server.sql"
                fi
 
 
