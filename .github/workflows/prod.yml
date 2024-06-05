@@ -74,6 +74,10 @@ jobs:
           run: |
                docker stop cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
                docker rm cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
+          
+        - name: Create Docker network
+          run: |
+               docker network create cats-network || true
 
         - name: Start PostgreSQL container
           run: |
