@@ -63,6 +63,10 @@ jobs:
         - name: Pull frontend image
           run: docker pull leonadolnym/cat-service-frontend:latest
 
+        - name: Run PostgreSQL container
+          run: |
+            docker run -d --name cats-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=leo123 -e POSTGRES_DB=cats -p 5432:5432 postgres:alpine
+
         - name: Run backend container
           run: |
             docker stop cat-service-backend || true

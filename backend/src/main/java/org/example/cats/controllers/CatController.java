@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/cat")
 @Slf4j
 @AllArgsConstructor
-@CrossOrigin(origins = "http://13.59.64.213:3000")
+@CrossOrigin(origins = "http://18.222.248.95:3000")
 public class CatController {
 
     private final CatService catService;
