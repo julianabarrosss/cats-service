@@ -22,7 +22,7 @@ const CatList = () => {
       <h2>Lista de Gatos</h2>
       <ul>
         {cats.map((cat) => (
-          <li key={cat.id}>{cat.nome} - {cat.breed} - {cat.birth}</li>
+          <li key={cat.id}>{cat.name} - {cat.breed} - {cat.birth}</li>
         ))}
       </ul>
     </div>
