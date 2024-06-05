@@ -49,6 +49,13 @@ jobs:
               run: |
                 cd backend
                 docker push leonadolnym/cat-service-backend
+            
+            - name: Pull Zabbix images
+              run: |
+                 docker pull zabbix/zabbix-server-mysql:latest
+                 docker pull zabbix/zabbix-web-nginx-mysql:latest
+                 docker pull zabbix/zabbix-agent:latest
+                 docker pull mysql:5.7
     
     deploy:
       needs: build
@@ -65,8 +72,8 @@ jobs:
 
         - name: Stop and remove existing containers
           run: |
-               docker stop cats-db cat-service-backend cat-service-frontend || true
-               docker rm cats-db cat-service-backend cat-service-frontend || true
+               docker stop cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
+               docker rm cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
 
         - name: Start PostgreSQL container
           run: |
@@ -85,3 +92,7 @@ jobs:
         - name: Start frontend container
           run: |
             docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
+
+        - name: Start Zabbix containers
+          run: |
+               docker-compose -f :~/cats-service/docker-compose.yml up -d zabbix-db zabbix-server zabbix-web zabbix-agent
