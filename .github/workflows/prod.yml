@@ -83,12 +83,6 @@ jobs:
           run: |
               docker run -d --name cats-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=leo123 -e POSTGRES_DB=cats -p 5432:5432 postgres:alpine
 
-        - name: Wait for PostgreSQL to be ready
-          run: |
-              while ! nc -z cats-db 5432; do
-                 sleep 1
-              done
-
         - name: Start backend container
           run: |
                docker run -d -p 8080:8080 --name cat-service-backend leonadolnym/cat-service-backend:latest
@@ -107,11 +101,7 @@ jobs:
                   -v zabbix-db-data:/var/lib/mysql \
                   --network cats-network \
                   mysql:5.7
-        - name: Wait for Zabbix database to be ready
-          run: |
-               while ! nc -z zabbix-db 3306; do
-                  sleep 1
-               done
+
 
         - name: Start Zabbix server
           run: |
