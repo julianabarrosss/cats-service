@@ -49,13 +49,6 @@ jobs:
               run: |
                 cd backend
                 docker push leonadolnym/cat-service-backend
-            
-            - name: Pull Zabbix images
-              run: |
-                 docker pull zabbix/zabbix-server-mysql:latest
-                 docker pull zabbix/zabbix-web-nginx-mysql:latest
-                 docker pull zabbix/zabbix-agent:latest
-                 docker pull mysql:5.7
     
     deploy:
       needs: build
@@ -72,8 +65,8 @@ jobs:
 
         - name: Stop and remove existing containers
           run: |
-               docker stop cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
-               docker rm cats-db cat-service-backend cat-service-frontend zabbix-db zabbix-server zabbix-web zabbix-agent || true
+               docker stop cats-db cat-service-backend cat-service-frontend || true
+               docker rm cats-db cat-service-backend cat-service-frontend || true
           
         - name: Create Docker network
           run: |
@@ -90,60 +83,3 @@ jobs:
         - name: Start frontend container
           run: |
             docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
-
-        - name: Start Zabbix database
-          run: |
-              docker run -d --name zabbix-db \
-                  -e MYSQL_DATABASE=zabbix \
-                  -e MYSQL_USER=zabbix \
-                  -e MYSQL_PASSWORD=zabbix_pwd \
-                  -e MYSQL_ROOT_PASSWORD=root_pwd \
-                  -v zabbix-db-data:/var/lib/mysql \
-                  --network cats-network \
-                  mysql:5.7
-
-        - name: Ensure port 10051 is free
-          run: |
-                if lsof -Pi :10051 -sTCP:LISTEN -t >/dev/null ; then
-                  docker stop $(docker ps -q --filter "publish=10051") || true
-                  docker rm $(docker ps -a -q --filter "publish=10051") || true
-                fi
-
-        - name: Start Zabbix server
-          run: |
-                docker run -d --name zabbix-server \
-                  -e DB_SERVER_HOST=zabbix-db \
-                  -e MYSQL_DATABASE=zabbix \
-                  -e MYSQL_USER=zabbix \
-                  -e MYSQL_PASSWORD=zabbix_pwd \
-                  -e MYSQL_ROOT_PASSWORD=root_pwd \
-                  --network cats-network \
-                  -p 10051:10051 \
-                  zabbix/zabbix-server-mysql:latest
-
-        - name: Initialize Zabbix database
-          run: |
-               if ! docker exec zabbix-db mysql -u root -proot_pwd -e "USE zabbix; SHOW TABLES;" | grep -q "users"; then
-               docker exec zabbix-server /bin/bash -c "mysql -h zabbix-db -u root -proot_pwd zabbix < /usr/share/zabbix-sql-scripts/mysql/server.sql"
-               fi
-
-        - name: Start Zabbix web interface
-          run: |
-                docker run -d --name zabbix-web \
-                    -e ZBX_SERVER_HOST=zabbix-server \
-                    -e DB_SERVER_HOST=zabbix-db \
-                    -e MYSQL_DATABASE=zabbix \
-                    -e MYSQL_USER=zabbix \
-                    -e MYSQL_PASSWORD=zabbix_pwd \
-                    -e MYSQL_ROOT_PASSWORD=root_pwd \
-                    --network cats-network \
-                    -p 8081:8080 \
-                    zabbix/zabbix-web-nginx-mysql:latest 
-
-        - name: Start Zabbix agent
-          run: |
-               docker run -d --name zabbix-agent \
-                -e ZBX_SERVER_HOST=zabbix-server \
-                --network cats-network \
-                -p 10050:10050 \
-                zabbix/zabbix-agent:latest

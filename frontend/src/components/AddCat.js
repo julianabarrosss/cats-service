@@ -9,7 +9,7 @@ const AddCat = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://18.189.43.165:8080/cat', { name, breed, birth });
+      const response = await axios.post('http://3.144.71.109:8080/cat', { name, breed, birth });
       console.log(response.data);
       // Limpar os campos após o envio
       setName('');

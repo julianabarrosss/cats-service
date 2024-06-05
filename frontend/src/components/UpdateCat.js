@@ -10,7 +10,7 @@ const UpdateCat = ({ fetchCats }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://18.189.43.165:8080/cat/${id}`, { name, breed, birth });
+      const response = await axios.put(`http://3.144.71.109:8080/cat/${id}`, { name, breed, birth });
       console.log(response.data);
       // Limpar os campos após o envio
       setId('');
