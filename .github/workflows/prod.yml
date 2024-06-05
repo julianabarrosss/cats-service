@@ -93,7 +93,51 @@ jobs:
           run: |
             docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
 
-        - name: Start Zabbix containers
+        - name: Start Zabbix database
           run: |
-               cd ~/cats-service
-               docker-compose up -d zabbix-db zabbix-server zabbix-web zabbix-agent
+              docker run -d --name zabbix-db \
+                  -e MYSQL_DATABASE=zabbix \
+                  -e MYSQL_USER=zabbix \
+                  -e MYSQL_PASSWORD=zabbix_pwd \
+                  -e MYSQL_ROOT_PASSWORD=root_pwd \
+                  -v zabbix-db-data:/var/lib/mysql \
+                  --network cats-network \
+                  mysql:5.7
+        - name: Wait for Zabbix database to be ready
+          run: |
+               while ! nc -z localhost 3306; do
+                  sleep 1
+               done
+
+        - name: Start Zabbix server
+          run: |
+                docker run -d --name zabbix-server \
+                  -e DB_SERVER_HOST=zabbix-db \
+                  -e MYSQL_DATABASE=zabbix \
+                  -e MYSQL_USER=zabbix \
+                  -e MYSQL_PASSWORD=zabbix_pwd \
+                  -e MYSQL_ROOT_PASSWORD=root_pwd \
+                  --network cats-network \
+                  -p 10051:10051 \
+                  zabbix/zabbix-server-mysql:latest
+
+        - name: Start Zabbix web interface
+          run: |
+                docker run -d --name zabbix-web \
+                    -e ZBX_SERVER_HOST=zabbix-server \
+                    -e DB_SERVER_HOST=zabbix-db \
+                    -e MYSQL_DATABASE=zabbix \
+                    -e MYSQL_USER=zabbix \
+                    -e MYSQL_PASSWORD=zabbix_pwd \
+                    -e MYSQL_ROOT_PASSWORD=root_pwd \
+                    --network cats-network \
+                    -p 8081:8080 \
+                    zabbix/zabbix-web-nginx-mysql:latest 
+
+        - name: Start Zabbix agent
+          run: |
+               docker run -d --name zabbix-agent \
+                -e ZBX_SERVER_HOST=zabbix-server \
+                --network cats-network \
+                -p 10050:10050 \
+                zabbix/zabbix-agent:latest
