@@ -63,18 +63,11 @@ jobs:
         - name: Pull frontend image
           run: docker pull leonadolnym/cat-service-frontend:latest
 
-        - name: Run PostgreSQL container
+        - name: Stop and remove existing containers
           run: |
-            docker run -d --name cats-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=leo123 -e POSTGRES_DB=cats -p 5432:5432 postgres:alpine
+               docker stop cats-db cats-backend cats-frontend || true
+               docker rm cats-db cats-backend cats-frontend || true
 
-        - name: Run backend container
+        - name: Start services using docker-compose  
           run: |
-            docker stop cat-service-backend || true
-            docker rm -f cat-service-backend || true
-            docker run -d -p 8080:8080 --name cat-service-backend leonadolnym/cat-service-backend:latest
-        
-        - name: Run frontend container
-          run: |
-            docker stop cat-service-frontend || true
-            docker rm -f cat-service-frontend || true
-            docker run -d -p 3000:3000 --name cat-service-frontend leonadolnym/cat-service-frontend:latest
+              docker-compose up -d 
