@@ -6,7 +6,7 @@ const CatList = ({ setFetchCats }) => {
 
   const fetchCats = async () => {
     try {
-      const response = await axios.get('http://18.222.248.95:8080/cat');
+      const response = await axios.get('http://18.118.99.172:8080/cat');
       console.log(response.data);
       setCats(response.data);
     } catch (error) {
