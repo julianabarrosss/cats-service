@@ -25,10 +25,10 @@ const CatList = ({ setFetchCats }) => {
       <ul>
         {cats.map((cat) => (
           <li key={cat.id}>
-            {cat.nome} - {cat.breed} - {cat.birth}
+            {cat.name} - {cat.breed} - {cat.birth}
             <button onClick={() => {
               document.getElementById('update-id').value = cat.id;
-              document.getElementById('update-nome').value = cat.nome;
+              document.getElementById('update-name').value = cat.name;
               document.getElementById('update-breed').value = cat.breed;
               document.getElementById('update-birth').value = cat.birth;
             }}>Atualizar</button>

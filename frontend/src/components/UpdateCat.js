@@ -3,18 +3,18 @@ import axios from 'axios';
 
 const UpdateCat = ({ fetchCats }) => {
   const [id, setId] = useState('');
-  const [nome, setNome] = useState('');
+  const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
   const [birth, setBirth] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://18.222.248.95:8080/cat/${id}`, { nome, breed, birth });
+      const response = await axios.put(`http://18.222.248.95:8080/cat/${id}`, { name, breed, birth });
       console.log(response.data);
       // Limpar os campos após o envio
       setId('');
-      setNome('');
+      setName('');
       setBreed('');
       setBirth('');
       // Atualize a lista de gatos
@@ -32,7 +32,7 @@ const UpdateCat = ({ fetchCats }) => {
       </div>
       <div>
         <label>Nome:</label>
-        <input type="text" id="update-nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+        <input type="text" id="update-name" value={name} onChange={(e) => setName(e.target.value)} />
       </div>
       <div>
         <label>Raça:</label>
